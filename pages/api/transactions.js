@@ -26,7 +26,7 @@ const transactions = async (req, res) => {
         ],
       },
     });
-    return res.status(200).send({ transactions });
+    return res.status(200).send({ transactions, accountNumber: account?.accountNumber });
   }
 };
 

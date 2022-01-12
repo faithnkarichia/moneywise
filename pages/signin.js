@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import Auth from '../layouts/Auth.js';
 import { ToastContainer, toast } from 'react-nextjs-toast';
+import { useSnackbar } from 'nextjs-toast'
 
 export default function Login() {
   const store = useStore();
@@ -29,9 +30,7 @@ export default function Login() {
       .then((data) => {
         if (data.error) {
           setLoginError(data.error);
-          toast.notify(data.error, {
-            type: 'error'
-          });
+          useSnackbar.showMessage(data.error, 'error', 'filled');
         } else {
           store.setAccessToken(data.accessToken);
           store.setUser(data.user);

@@ -8,15 +8,15 @@ import useSWR from 'swr';
 import checkAuthClient from '../functions/checkAuthClient';
 import prisma from '../lib/prisma';
 import { ToastContainer, toast } from 'react-nextjs-toast';
-
+import { useRouter } from 'next/router';
 const { Convert } = require('easy-currencies');
 
 export const getStaticProps = async () => {
   const accounts = await prisma.account.findMany();
   return {
     props: {
-      accounts: JSON.stringify(accounts),
-    },
+      accounts: JSON.stringify(accounts)
+    }
   };
 };
 export type Accounts = {
@@ -52,11 +52,12 @@ const NewTransaction: React.FC<Props> = (props) => {
   const fetcher = async () => {
     return await axios.get('/api/protectedRoute', {
       headers: {
-        authorization: `Bearer ${store.accessToken}`,
-      },
+        authorization: `Bearer ${store.accessToken}`
+      }
     });
   };
 
+  const router = useRouter();
   const { data, error } = useSWR('/api/', fetcher);
   useEffect(() => {
     if (data) setSecret(data.data);
@@ -76,20 +77,21 @@ const NewTransaction: React.FC<Props> = (props) => {
     fetch('/api/account_balance', {
       method: 'POST',
       body: JSON.stringify({
-        userId: store.user.id,
-      }),
+        userId: store.user.id
+      })
     })
       .then((res) => {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
         setAccountBalance(data.accountBalance);
-      })
+      });
   }
 
   // AccountBalance
   useEffect(() => {
-    fetchAccountBalance()
+    fetchAccountBalance();
   }, []);
 
   const convertCurrency = async (
@@ -114,64 +116,67 @@ const NewTransaction: React.FC<Props> = (props) => {
         senderId: store.user.id,
         to: recipient,
         amount: Number(amount),
-        currency: currencyFrom,
-      }),
+        currency: currencyFrom
+      })
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log('daata', data, data.error)
         if (data.error) {
-          setError(data.error);
           toast.notify(data.error, {
             type: 'error'
           });
-        }
-        else {
+          setError(data.error);
+        } else {
           setAccountBalance(data.accountBalance);
+          toast.notify('Transaction successful');
+          router.push('/');
         }
       });
   }
 
   return (
-    <><ToastContainer/>
-      <IndexNavbar fixed store={store} auth={auth}/>
-      <main className='profile-page'>
-        <section className='relative block h-500-px'>
+    <>
+      <ToastContainer />
+      <IndexNavbar fixed store={store} auth={auth} />
+      <main className="profile-page">
+        <section className="relative block h-500-px">
           <div
-            className='absolute top-0 w-full h-full bg-center bg-cover'
+            className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1561414927-6d86591d0c4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80')",
+                "url('https://images.unsplash.com/photo-1561414927-6d86591d0c4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80')"
             }}
           >
             <span
-              id='blackOverlay'
-              className='w-full h-full absolute opacity-50 bg-black'
+              id="blackOverlay"
+              className="w-full h-full absolute opacity-50 bg-black"
             ></span>
           </div>
           <div
-            className='top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-16'
+            className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-16"
             style={{ transform: 'translateZ(0)' }}
           >
             <svg
-              className='absolute bottom-0 overflow-hidden'
-              xmlns='http://www.w3.org/2000/svg'
-              preserveAspectRatio='none'
-              version='1.1'
-              viewBox='0 0 2560 100'
-              x='0'
-              y='0'
+              className="absolute bottom-0 overflow-hidden"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+              version="1.1"
+              viewBox="0 0 2560 100"
+              x="0"
+              y="0"
             >
               <polygon
-                className='text-blueGray-200 fill-current'
-                points='2560 0 2560 100 0 100'
+                className="text-blueGray-200 fill-current"
+                points="2560 0 2560 100 0 100"
               ></polygon>
             </svg>
           </div>
         </section>
-        <section className='relative py-16 bg-blueGray-200'>
-          <div className='container mx-auto px-4'>
-            <div className='relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64'>
-              <div className='px-6'>
+        <section className="relative py-16 bg-blueGray-200">
+          <div className="container mx-auto px-4">
+            <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
+              <div className="px-6">
                 <TransactionTable
                   sender={sender}
                   setSender={setSender}

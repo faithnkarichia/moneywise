@@ -31,6 +31,7 @@ const HomePage: React.FC<Props> = (props) => {
   const [isError, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
+  const [userAccountNumber, setUserAccountNumber] = useState('');
 
   const store = useStore();
   const router = useRouter();
@@ -54,6 +55,7 @@ const HomePage: React.FC<Props> = (props) => {
       })
       .then((data) => {
         setTransactions(data.transactions);
+        setUserAccountNumber(data.accountNumber)
       });
   }
   useEffect(() => {
@@ -131,6 +133,7 @@ const HomePage: React.FC<Props> = (props) => {
                       <CardPageVisits
                         transactions={transactions}
                         userId={store.user.id}
+                        userAccountNumber={userAccountNumber}
                       />
                     </div>
                   </div>
