@@ -11,7 +11,6 @@ import { useRouter } from 'next/router';
 import { useStore } from '../store';
 import prisma from '../lib/prisma';
 
-// import { createUser, fetchUserWithEmail, createAccount } from '../utils/queries';
 export type TransactionProps = {
   id: number;
   from: string;

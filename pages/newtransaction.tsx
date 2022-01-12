@@ -6,7 +6,6 @@ import TransactionTable from '../components/Cards/TransactionTable.js';
 import Footer from '../components/Footers/Footer.js';
 import useSWR from 'swr';
 import checkAuthClient from '../functions/checkAuthClient';
-import { newTransaction } from '../utils/queries';
 import prisma from '../lib/prisma';
 import { ToastContainer, toast } from 'react-nextjs-toast';
 
