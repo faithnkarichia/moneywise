@@ -9,10 +9,8 @@ export default function CardSettings(props) {
     <>
       <div className='relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0'>
         <div className='rounded-t bg-white mb-0 px-6 py-6'>
-          <div className='text-center flex justify-between'>
-            <h6 className='text-blueGray-700 text-xl font-bold'>
-              New Transaction
-            </h6>
+        <div className='text-center flex justify-between'>
+            
             <h6 className='text-blueGray-700 text-xl font-bold'>
               Acc Bal{' '}
               <span
@@ -24,9 +22,17 @@ export default function CardSettings(props) {
                   fontWeight: '400',
                 }}
               >
-                ${props.accountBalance}
+                ${props.accountBalance} {' '} £{props.eurAccBal} {' '} ₦{props.ngnAccBal}
               </span>
             </h6>
+            
+          </div>
+          <br />
+          <div className='text-center flex justify-between'>
+            <h6 className='text-blueGray-700 text-xl font-bold'>
+              New Transaction
+            </h6>
+            
             <Link href='/'>
               <button
                 className='bg-blueGray-700 active:bg-blueGray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150'
@@ -168,8 +174,8 @@ export default function CardSettings(props) {
                 <div className='relative w-full mb-3'>
                   <textarea
                     type='text'
-                    value={props.message}
-                    onChange={(e) => props.setMessage(e.target.value)}
+                    value={props.personalNote}
+                    onChange={(e) => props.setPersonalNote(e.target.value)}
                     className='border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150'
                     rows='4'
                   ></textarea>

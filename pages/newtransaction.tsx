@@ -45,10 +45,13 @@ const NewTransaction: React.FC<Props> = (props) => {
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
   const [currencyFrom, setCurrencyFrom] = useState('');
+  const [personalNote, setPersonalNote] = useState('');
   const [currencyTo, setCurrencyTo] = useState('');
   const [convertedAmount, setConvertedAmount] = useState();
   const [accountBalance, setAccountBalance] = useState('0');
   const [accounts, setAccounts] = useState([]);
+  const [eurAccBal, setEurAccBal] = useState('0');
+  const [ngnAccBal, setNgnAccBal] = useState('0');
 
   const fetcher = async () => {
     return await axios.get('/api/protectedRoute', {
@@ -72,7 +75,7 @@ const NewTransaction: React.FC<Props> = (props) => {
         return res.json();
       })
       .then((data) => {
-        console.log('data', data)
+        console.log('data', data);
         setAccounts(data.accounts);
       });
   };
@@ -108,6 +111,8 @@ const NewTransaction: React.FC<Props> = (props) => {
       .then((data) => {
         console.log(data);
         setAccountBalance(data.accountBalance);
+        setEurAccBal(data.balEUR);
+        setNgnAccBal(data.balNGN);
       });
   }
 
@@ -138,12 +143,12 @@ const NewTransaction: React.FC<Props> = (props) => {
         senderId: store.user.id,
         to: recipient,
         amount: Number(amount),
-        currency: currencyFrom
+        currency: currencyFrom,
+        personalNote
       })
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('daata', data, data.error);
         if (data.error) {
           toast.notify(data.error, {
             type: 'error'
@@ -218,6 +223,10 @@ const NewTransaction: React.FC<Props> = (props) => {
                   setConvertedAmount={setConvertedAmount}
                   newTransaction={newTransaction}
                   accountBalance={accountBalance}
+                  eurAccBal={eurAccBal}
+                  ngnAccBal={ngnAccBal}
+                  setPersonalNote={setPersonalNote}
+                  personalNote={personalNote}
                 />
               </div>
             </div>

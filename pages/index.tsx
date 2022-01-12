@@ -79,12 +79,6 @@ const HomePage: React.FC<Props> = (props) => {
     setLoading(false);
   }, [data, error, router]);
 
-  // useEffect(() => {
-  //   if (store.accessToken == null) {
-  //     router.replace('/');
-  //   }
-  // }, [store.accessToken, router]);
-
   if (loading) {
     return <div>Loading...</div>;
   } else {

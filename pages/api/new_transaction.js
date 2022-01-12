@@ -6,7 +6,8 @@ const newTransaction = async (req, res) => {
   let transaction;
   let error;
 
-  const { senderId, to, amount, currency } = JSON.parse(req.body);
+  const { senderId, to, amount, currency, personalNote } = JSON.parse(req.body);
+  console.log('personalNote', personalNote);
   // find sender's account
   const senderAccount = await prisma.account.findUnique({
     where: {
@@ -19,7 +20,8 @@ const newTransaction = async (req, res) => {
     to,
     amount,
     currency,
-    userId: senderId
+    userId: senderId,
+    personalNote
   };
 
   // Check if sender has enough balance to complete the transaction
@@ -40,13 +42,14 @@ const newTransaction = async (req, res) => {
   }
   console.log('Reached here');
   console.log('foundAcc.balance', foundAcc.balance);
-  const convtAmt = await Convert(amount).from(currency.toUpperCase()).to('USD')
+  const convtAmt = await Convert(amount).from(currency.toUpperCase()).to('USD');
   console.log('convtAmt', convtAmt);
-  if (foundAcc.balance < convtAmt) {
+  if (Number(foundAcc.balance) < Number(convtAmt)) {
     data.message = 'Transaction failed due to Insufficient funds';
     data.description = 'Insufficient funds';
     transaction = await prisma.transaction.create({ data });
     error = 'Insufficient funds';
+    console.log('error', error);
     return res.status(400).send({ error: 'Insufficient funds' });
   }
   console.log(currency);
@@ -57,8 +60,8 @@ const newTransaction = async (req, res) => {
       .to('USD');
     console.log('Currency is not USD');
     // Subtract amou nt in USD from sender's balance and add the equivalent amount to receiver's balance
-    const toBeAdded = (foundAcc.balance + converted)
-    const toBeSubtracted = (foundAcc.balance - converted)
+    const toBeAdded = foundAcc.balance + converted;
+    const toBeSubtracted = foundAcc.balance - converted;
     console.log('old', foundAcc.balance, 'toBeAdded', toBeAdded);
     console.log('toBeSubtracted', toBeSubtracted);
     await prisma.account.update({
@@ -76,7 +79,7 @@ const newTransaction = async (req, res) => {
         accountNumber: to
       }
     });
-    
+
     if (!receiverAccount) {
       return res.status(400).send({ error: 'Receiver account does not exist' });
     }
@@ -112,6 +115,10 @@ const newTransaction = async (req, res) => {
         accountNumber: to
       }
     });
+
+    if (!receiverAccount) {
+      return res.status(400).send({ error: 'Receiver account does not exist' });
+    }
     await prisma.account.update({
       where: {
         accountNumber: to
@@ -126,7 +133,9 @@ const newTransaction = async (req, res) => {
     data.status = true;
     transaction = await prisma.transaction.create({ data });
     console.log('Transaction successful, currency is USD');
-    return res.status(200).send({ transaction, message: 'Transaction successful' });
+    return res
+      .status(200)
+      .send({ transaction, message: 'Transaction successful' });
   }
   // transaction
   //   ? res.status(200).send({ transaction })
