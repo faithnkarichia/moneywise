@@ -1,4 +1,4 @@
-import checkAuth from './middleware/checkAuthServer';
+import checkAuth from '../middleware/checkAuthServer';
 
 const protectedRoute = async (req, res) => {
   if (req.method === 'GET') {
