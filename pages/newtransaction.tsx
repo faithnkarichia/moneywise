@@ -48,6 +48,7 @@ const NewTransaction: React.FC<Props> = (props) => {
   const [currencyTo, setCurrencyTo] = useState('');
   const [convertedAmount, setConvertedAmount] = useState();
   const [accountBalance, setAccountBalance] = useState('0');
+  const [accounts, setAccounts] = useState([]);
 
   const fetcher = async () => {
     return await axios.get('/api/protectedRoute', {
@@ -59,6 +60,27 @@ const NewTransaction: React.FC<Props> = (props) => {
 
   const router = useRouter();
   const { data, error } = useSWR('/api/', fetcher);
+
+  const fetchAccounts = () => {
+    fetch('/api/accounts', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId: store.user.id
+      })
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log('data', data)
+        setAccounts(data.accounts);
+      });
+  };
+  useEffect(() => {
+    // Fetch Accounts
+    fetchAccounts();
+  }, []);
+
   useEffect(() => {
     if (data) setSecret(data.data);
     if (error) setError(error);
@@ -121,7 +143,7 @@ const NewTransaction: React.FC<Props> = (props) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log('daata', data, data.error)
+        console.log('daata', data, data.error);
         if (data.error) {
           toast.notify(data.error, {
             type: 'error'
@@ -190,7 +212,7 @@ const NewTransaction: React.FC<Props> = (props) => {
                   setCurrencyFrom={setCurrencyFrom}
                   currencyTo={currencyTo}
                   setCurrencyTo={setCurrencyTo}
-                  accountsList={props.accounts}
+                  accountsList={accounts}
                   convertCurrency={convertCurrency}
                   convertedAmount={convertedAmount}
                   setConvertedAmount={setConvertedAmount}
