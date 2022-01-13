@@ -35,8 +35,6 @@ function MyApp({ Component, pageProps }) {
   const store = useStore();
   const Layout = Component.layout || (({ children }) => <>{children}</>);
 
-  
-
   useEffect(() => {
     refreshToken().then((data) => {
       if (data.ok) {
@@ -55,48 +53,20 @@ function MyApp({ Component, pageProps }) {
     }, 600000);
   }, []);
 
-  // componentDidMount() {
-  //   refreshToken().then(data => {
-  //     if(data.ok) {
-  //       store.setAccessToken(data.accessToken)
-  //       store.setUser(data.user)
-  //     }
-  //     setLoading(false)
-  //   })
-
-  //   //starts silent refreshes
-  //   setInterval(() => {
-  //     refreshToken().then(data => {
-  //       if(data.ok) {
-  //         store.setAccessToken(data.accessToken)
-  //         store.setUser(data.user)
-  //       }
-  //     })
-  //   },600000)
-  // }
-  // render() {
-  // const { Component, pageProps } = this.props;
-
-  // const Layout = Component.layout || (({ children }) => <>{children}</>);
-
   return (
     <React.Fragment>
       <Head>
         <meta
-          name='viewport'
-          content='width=device-width, initial-scale=1, shrink-to-fit=no'
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <title>Fin - Money Transfer</title>
+        <title>Moneywise - Money Transfer</title>
       </Head>
-      {/* <UserProvider> */}
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      {/* </UserProvider> */}
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </React.Fragment>
   );
-  // }
- 
 }
 
 MyApp.getInitialProps = async ({ Component, router, ctx }) => {
@@ -109,4 +79,4 @@ MyApp.getInitialProps = async ({ Component, router, ctx }) => {
   return { pageProps };
 };
 
-export default MyApp
+export default MyApp;
