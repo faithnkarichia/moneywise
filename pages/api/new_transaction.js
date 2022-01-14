@@ -1,6 +1,8 @@
 import prisma from '../../lib/prisma';
-
+// import sgMail from '@sendgrid/mail';
 const { Convert } = require('easy-currencies');
+
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const newTransaction = async (req, res) => {
   let transaction;

@@ -7,8 +7,10 @@ import Footer from '../components/Footers/Footer.js';
 import useSWR from 'swr';
 import checkAuthClient from '../functions/checkAuthClient';
 import prisma from '../lib/prisma';
-import { ToastContainer, toast } from 'react-nextjs-toast';
+// import { ToastContainer, toast } from 'react-nextjs-toast';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
+
 const { Convert } = require('easy-currencies');
 
 export const getStaticProps = async () => {
@@ -52,6 +54,7 @@ const NewTransaction: React.FC<Props> = (props) => {
   const [accounts, setAccounts] = useState([]);
   const [eurAccBal, setEurAccBal] = useState('0');
   const [ngnAccBal, setNgnAccBal] = useState('0');
+  const [submitting, setSubmitting] = useState(false);
 
   const fetcher = async () => {
     return await axios.get('/api/protectedRoute', {
@@ -137,6 +140,7 @@ const NewTransaction: React.FC<Props> = (props) => {
   };
 
   function newTransaction() {
+    setSubmitting(true);
     fetch('/api/new_transaction', {
       method: 'POST',
       body: JSON.stringify({
@@ -150,21 +154,36 @@ const NewTransaction: React.FC<Props> = (props) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
-          toast.notify(data.error, {
-            type: 'error'
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.error
+          }).then((res) => {
+            if (res.value) {
+              setSubmitting(false);
+            }
           });
           setError(data.error);
         } else {
           setAccountBalance(data.accountBalance);
-          toast.notify('Transaction successful');
-          router.push('/');
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Transaction Successful'
+          }).then((res) => {
+            if (res.isConfirmed) {
+              setSubmitting(false);
+              router.push('/');
+            }
+          });
         }
       });
+    // setSubmitting(false);
   }
 
   return (
     <>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <IndexNavbar fixed store={store} auth={auth} />
       <main className="profile-page">
         <section className="relative block h-500-px">
@@ -227,6 +246,8 @@ const NewTransaction: React.FC<Props> = (props) => {
                   ngnAccBal={ngnAccBal}
                   setPersonalNote={setPersonalNote}
                   personalNote={personalNote}
+                  submitting={submitting}
+                  setSubmitting={setSubmitting}
                 />
               </div>
             </div>
