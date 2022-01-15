@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { useStore } from '../store';
 import { useRouter } from 'next/router';
-
+import Swal from 'sweetalert2';
 import Auth from '../layouts/Auth.js';
 import { ToastContainer, toast } from 'react-nextjs-toast';
 
@@ -35,7 +35,8 @@ export default function Login() {
         } else {
           store.setAccessToken(data.accessToken);
           store.setUser(data.user);
-          router.push('/');
+          router.push('/'
+          )
         }
       });
   }

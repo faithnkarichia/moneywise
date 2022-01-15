@@ -6,6 +6,7 @@ import { useStore } from '../store';
 import Auth from '../layouts/Auth.js';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -24,8 +25,19 @@ export default function Register() {
         password
       })
     }).then(res => {
-      if(res.status === 409) throw new Error('Please use other email')
-      router.push('/signin')
+      if(res.status === 409) {
+        throw new Error('Please use other email')
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Successfully created your account!'
+      }).then((res) => {
+        if (res.isConfirmed) {
+          router.push('/signin');
+        }
+      })
       return res.json()
     }).then(data => {
       store.setAccessToken(data.accessToken)

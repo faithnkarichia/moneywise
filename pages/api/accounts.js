@@ -11,11 +11,11 @@ const accounts = async (req, res) => {
     });
     // Find all accounts except the one that has accountNumber account.accountNumber
     const accounts = await prisma.account.findMany({
-        where: {
-            accountNumber: {
-                not: account.accountNumber
-            }
+      where: {
+        accountNumber: {
+          not: account.accountNumber
         }
+      }
     });
 
     return res.status(200).send({ accounts });

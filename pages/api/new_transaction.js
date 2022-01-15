@@ -1,15 +1,14 @@
 import prisma from '../../lib/prisma';
-// import sgMail from '@sendgrid/mail';
+import sgMail from '@sendgrid/mail';
 const { Convert } = require('easy-currencies');
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const newTransaction = async (req, res) => {
   let transaction;
   let error;
 
   const { senderId, to, amount, currency, personalNote } = JSON.parse(req.body);
-  console.log('personalNote', personalNote);
   // find sender's account
   const senderAccount = await prisma.account.findUnique({
     where: {
@@ -36,22 +35,17 @@ const newTransaction = async (req, res) => {
 
   console.log(senderAccount.accountNumber, to);
   if (senderAccount.accountNumber === to) {
-    console.log('You cannot send money to yourself');
     error = 'You cannot send money to yourself';
     return res.status(400).send({
       error: 'You cannot send money to yourself'
     });
   }
-  console.log('Reached here');
-  console.log('foundAcc.balance', foundAcc.balance);
   const convtAmt = await Convert(amount).from(currency.toUpperCase()).to('USD');
   console.log('convtAmt', convtAmt);
   if (Number(foundAcc.balance) < Number(convtAmt)) {
     data.message = 'Transaction failed due to Insufficient funds';
     data.description = 'Insufficient funds';
     transaction = await prisma.transaction.create({ data });
-    error = 'Insufficient funds';
-    console.log('error', error);
     return res.status(400).send({ error: 'Insufficient funds' });
   }
   console.log(currency);
@@ -60,12 +54,8 @@ const newTransaction = async (req, res) => {
     const converted = await Convert(amount)
       .from(currency.toUpperCase())
       .to('USD');
-    console.log('Currency is not USD');
-    // Subtract amou nt in USD from sender's balance and add the equivalent amount to receiver's balance
-    const toBeAdded = foundAcc.balance + converted;
+    // Subtract amount in USD from sender's balance and add the equivalent amount to receiver's balance
     const toBeSubtracted = foundAcc.balance - converted;
-    console.log('old', foundAcc.balance, 'toBeAdded', toBeAdded);
-    console.log('toBeSubtracted', toBeSubtracted);
     await prisma.account.update({
       where: {
         accountNumber: senderAccount.accountNumber
@@ -74,7 +64,6 @@ const newTransaction = async (req, res) => {
         balance: toBeSubtracted
       }
     });
-    console.log('Updated sender balance1');
 
     const receiverAccount = await prisma.account.findUnique({
       where: {
@@ -86,12 +75,14 @@ const newTransaction = async (req, res) => {
       return res.status(400).send({ error: 'Receiver account does not exist' });
     }
 
+    const toBeAdded = receiverAccount.balance + converted;
+    console.log('tobeAdded', toBeAdded);
     await prisma.account.update({
       where: {
         accountNumber: to
       },
       data: {
-        balance: receiverAccount.balance + converted
+        balance: toBeAdded
       }
     });
     console.log('Updated receiver balance1');
@@ -117,10 +108,11 @@ const newTransaction = async (req, res) => {
         accountNumber: to
       }
     });
-
+    console.log('receiverAcc', receiverAccount, 'to', to)
     if (!receiverAccount) {
       return res.status(400).send({ error: 'Receiver account does not exist' });
     }
+    // Update senders account with less the sent amount
     await prisma.account.update({
       where: {
         accountNumber: to
@@ -134,7 +126,7 @@ const newTransaction = async (req, res) => {
     data.description = 'Successfully sent money';
     data.status = true;
     transaction = await prisma.transaction.create({ data });
-    console.log('Transaction successful, currency is USD');
+    console.log('Transaction successful, currency is USD', transaction);
     return res
       .status(200)
       .send({ transaction, message: 'Transaction successful' });
