@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import {
   createAccessToken,
   createRefreshToken,
-  sendRefreshToken,
+  sendRefreshToken
 } from '../../functions/auth';
 
 const signin = async (req, res) => {
@@ -12,8 +12,8 @@ const signin = async (req, res) => {
     const { email, password } = JSON.parse(req.body);
     const user = await prisma.user.findUnique({
       where: {
-        email,
-      },
+        email
+      }
     });
     if (!user) {
       return res.status(401).send({ error: 'Invalid credentials' });
@@ -26,21 +26,16 @@ const signin = async (req, res) => {
     const userForTheClient = {
       id: user.id,
       username: user.username,
-      email: user.email,
+      email: user.email
     };
 
     const token = createRefreshToken(user);
     sendRefreshToken(res, token);
     const accessToken = createAccessToken(user);
-    res.send({ user: userForTheClient, accessToken });
-    // if (user.password === password) {
-    //   const token = createRefreshToken(user);
-    //   sendRefreshToken(res, token);
-    //   const accessToken = createAccessToken(user);
-    //   res.send({ user: userForTheClient, accessToken });
-    // } else {
-    //   res.status(404).send();
-    // }
+    res.send({
+      user: userForTheClient,
+      accessToken
+    });
   }
 };
 
