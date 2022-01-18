@@ -1,5 +1,9 @@
-name: Deploy Torchlight Engine
-on: [push, pull_request]
+name: Deploy to Vercel
+on:
+  workflow_dispatch:
+    release:
+      types: [published]
+
 jobs:
   vercel:
     runs-on: ubuntu-latest
