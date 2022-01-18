@@ -38,6 +38,7 @@
     "start": "next start",
     "build": "next build",
     "dev": "next dev",
+    "seed": "ts-node prisma/seed.ts",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install --legacy-peer-deps && npm run build:tailwind && npm run dev",
     "build:tailwind": "tailwind build styles/index.css -o styles/tailwind.css"
   },
@@ -63,6 +64,7 @@
     "@types/react": "^17.0.38",
     "autoprefixer": "10.2.5",
     "postcss": "^5.0.0",
-    "prisma": "^3.7.0"
+    "prisma": "^3.7.0",
+    "ts-node": "^10.4.0"
   }
 }
