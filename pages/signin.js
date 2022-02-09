@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { useStore } from '../store';
 import { useRouter } from 'next/router';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 import Auth from '../layouts/Auth.js';
 import { ToastContainer, toast } from 'react-nextjs-toast';
 
@@ -17,6 +17,7 @@ export default function Login() {
   function signIn() {
     fetch('/api/signin', {
       method: 'POST',
+      // Stringify the json object
       body: JSON.stringify({
         email: email,
         password: password
@@ -27,10 +28,12 @@ export default function Login() {
       })
       .then((data) => {
         if (data.error) {
+          // Notify user of incorrect credentials
           toast.notify(data.error, {
             type: 'error'
           });
         } else {
+          // Set the access token
           store.setAccessToken(data.accessToken);
           store.setUser(data.user);
           router.push('/');
@@ -40,6 +43,7 @@ export default function Login() {
 
   return (
     <>
+    {/* shows the error if you try to signin with incorrect credentials */}
       <ToastContainer />
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">

@@ -36,6 +36,7 @@ const HomePage: React.FC<Props> = (props) => {
 
   const store = useStore();
   const router = useRouter();
+  // Trigured every time the HomePage component is updated or mounted
   useEffect(() => {
     if (store.accessToken !== null) {
       setAuth(true);
@@ -44,6 +45,7 @@ const HomePage: React.FC<Props> = (props) => {
     }
   }, [store.accessToken]);
 
+  // Fetch transactions
   function fetchTransactions() {
     fetch('/api/transactions', {
       method: 'POST',
@@ -55,10 +57,13 @@ const HomePage: React.FC<Props> = (props) => {
         return res.json();
       })
       .then((data) => {
+        // Set transactions
         setTransactions(data.transactions);
         setUserAccountNumber(data.accountNumber);
       });
   }
+
+  // Trigured every time the hoepage componentg is updated or mounted
   useEffect(() => {
     // fetch transactions
     fetchTransactions();
@@ -84,6 +89,7 @@ const HomePage: React.FC<Props> = (props) => {
   } else {
     return (
       <>
+      {/* Checks if auth has a value */}
         {auth ? (
           <>
             <IndexNavbar fixed store={store} auth={auth} />

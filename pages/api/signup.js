@@ -17,8 +17,12 @@ const signup = async (req, res) => {
     },
   });
 
+  // Check if user exists
   if (checkIfExist) return res.status(409).send();
+
+  // Hash password using bcrypt
   const hashedPassword = await bcrypt.hashSync(password, crypto.randomInt(8, 10));
+  // Creates user in the db
   const user = await prisma.user.create({
     data: {
       email,
@@ -27,8 +31,10 @@ const signup = async (req, res) => {
     },
   });
 
+  // Generate an account number without the '-
   const accountNumber = uuidv4().replace(/-/g, '');
 
+  // Creates account in the db
   const acc = await prisma.account.create({
     data: {
       accountNumber,
