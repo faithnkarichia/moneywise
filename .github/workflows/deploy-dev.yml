@@ -1,8 +1,8 @@
 name: Deploy to Vercel
 on:
-  workflow_dispatch:
-    release:
-      types: [published]
+  push:
+    branches:
+      - master
 
 jobs:
   vercel:
